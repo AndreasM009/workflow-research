@@ -13,6 +13,12 @@ jobs:
         env:
           GITHUB_CONTEXT: ${{ toJSON(github) }}
         run: echo "$GITHUB_CONTEXT"
+        
+      - name: Dump Env
+        env:
+          ALL_ENV: ${{ toJSON(env) }}
+        run: echo "$ALL_ENV"
+        
       - name: Deploy
         if: env.DEPLOY
         run: echo "Deploy"
