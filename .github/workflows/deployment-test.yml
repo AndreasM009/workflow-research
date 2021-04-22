@@ -20,5 +20,5 @@ jobs:
         run: echo "$ALL_ENV"
         
       - name: Deploy
-        if: ${{ env.DEPLOY }}
+        if: env.DEPLOY == true
         run: echo "Deploy"
