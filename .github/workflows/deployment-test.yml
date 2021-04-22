@@ -4,7 +4,7 @@ on:
   deployment:
   workflow_dispatch:
 env:
-  DEPLOY: ${{ github.event_name == 'deployment' }}
+  DEPLOY: ${{ (github.event_name == 'deployment') || (github.event_name == 'workflow_dispatch') }}
 jobs:
   deploy:
     runs-on: ubuntu-latest
