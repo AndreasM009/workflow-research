@@ -2,6 +2,7 @@ name: deployment-test
 
 on:
   deployment:
+  workflow_dispatch:
 
 jobs:
   deploy:
