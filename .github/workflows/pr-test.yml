@@ -1,0 +1,52 @@
+name: pr-test
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  deploy-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: acknowledge deployment request to commenter
+        id: check
+        uses: khan/pull-request-comment-trigger@v1
+        with:
+          trigger: "@deploy"
+          reaction: rocket
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+    outputs:
+      triggered: ${{ steps.check.outputs.triggered }}
+
+  create-deployment:
+    runs-on: ubuntu-latest
+    needs: deploy-check
+    if: needs.deploy-check.outputs.triggered == 'true'
+
+    steps:
+      - name: get pull request ref
+        id: get_pull_request_ref
+        uses: octokit/request-action@v2.x
+        with:
+          route: GET /repos/{owner}/{repository}/pulls/:issue_id
+          owner: ${{ github.repository_owner }}
+          repository: ${{ github.repository }}
+          issue_id: ${{ github.event.issue.number }}
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: create deployment
+        id: create_deployment
+        uses: octokit/request-action@v2.x
+        with:
+          route: POST /repos/{owner}/{repository}/deployments
+          owner: ${{ github.repository_owner }}
+          repository: ${{ github.repository }}
+          ref: ${{ fromJson(steps.get_pull_request_ref.outputs.data).head.ref }}
+          environment: dev
+          auto_merge: false
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
