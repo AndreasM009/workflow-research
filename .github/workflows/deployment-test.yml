@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TESTING: 'true'
+    if: env.DEPLOY == 'true'
     steps:
       - name: Dump GitHub Context
         env:
