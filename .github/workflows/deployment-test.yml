@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TESTING: 'true'
+      DEPLOY: ${{ (github.event_name == 'deployment') || (github.event_name == 'workflow_dispatch') }}
     if: env.DEPLOY == 'true'
     steps:
       - name: Dump GitHub Context
